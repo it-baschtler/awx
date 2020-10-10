@@ -48,6 +48,10 @@ options:
       description:
         - Variables which will be made available to jobs ran inside the workflow.
       type: dict
+    execution_environment:
+      description:
+        - Execution Environment to use for the WFJT.
+      type: str
     organization:
       description:
         - Organization the workflow job template exists in.
