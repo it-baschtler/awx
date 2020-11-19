@@ -39,10 +39,6 @@ options:
       description:
         - Description to use for the project.
       type: str
-    execution_environment:
-      description:
-        - Execution Environment to use for the project.
-      type: str
     scm_type:
       description:
         - Type of SCM resource.
@@ -114,6 +110,14 @@ options:
         - Local absolute file path containing a custom Python virtualenv to use
       type: str
       default: ''
+    default_environment:
+      description:
+        - Default Execution Environment to use for jobs relating to the project.
+      type: str
+    execution_environment:
+      description:
+        - Execution Environment to use for project updates.
+      type: str
     organization:
       description:
         - Name of organization for project.
@@ -260,6 +264,8 @@ def main():
         allow_override=dict(type='bool', aliases=['scm_allow_override']),
         timeout=dict(type='int', default=0, aliases=['job_timeout']),
         custom_virtualenv=dict(),
+        default_environment=dict(),
+        execution_environment=dict(),
         organization=dict(),
         notification_templates_started=dict(type="list", elements='str'),
         notification_templates_success=dict(type="list", elements='str'),
@@ -283,6 +289,11 @@ def main():
     credential = module.params.get('credential')
     scm_update_on_launch = module.params.get('scm_update_on_launch')
     scm_update_cache_timeout = module.params.get('scm_update_cache_timeout')
+    allow_override = module.params.get('allow_override')
+    timeout = module.params.get('timeout')
+    custom_virtualenv = module.params.get('custom_virtualenv')
+    default_ee = module.params.get('default_environment')
+    ee = module.params.get('execution_environment')
     organization = module.params.get('organization')
     state = module.params.get('state')
     wait = module.params.get('wait')
@@ -353,6 +364,12 @@ def main():
 
     if credential is not None:
         project_fields['credential'] = credential
+    if default_ee is not None:
+        project_fields['default_environment'] = module.resolve_name_to_id('execution_environments', default_ee)
+    if ee is not None:
+        project_fields['execution_environment'] = module.resolve_name_to_id('execution_environments', ee)
+    if allow_override is not None:
+        project_fields['allow_override'] = allow_override
     if scm_type == '':
         if local_path is not None:
             project_fields['local_path'] = local_path
