@@ -371,3 +371,4 @@ JobDetail.propTypes = {
 };
 
 export default withI18n()(JobDetail);
+export { getLaunchedByDetails };
